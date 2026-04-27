@@ -1,1 +1,132 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
+
+class circularlist:
+    def __init__(self):
+        self.head = None
+        self.current = None  # get_next()용 포인터
+
+    # 삽입 (위치 지정 없이: 기본적으로 끝에 추가)
+    def insert(self, data):
+        new_node = Node(data)
+
+        # 1. 리스트가 비어있는 경우
+        if self.head is None:
+            self.head = new_node
+            new_node.next = self.head  # 자기 자신을 가리킴
+            self.current = self.head
+            return
+
+        # 2. 마지막 노드 찾기
+        temp = self.head
+        while temp.next != self.head:
+            temp = temp.next
+
+        # 3. 끝에 삽입
+        temp.next = new_node
+        new_node.next = self.head
+
+    # 삭제 (값 기준)
+    def delete(self, data):
+        if self.head is None:
+            print("리스트가 비어 있습니다.")
+            return
+
+        current = self.head
+        prev = None
+
+        # 1. head 삭제하는 경우
+        if current.data == data:
+            # 노드가 하나뿐인 경우
+            if current.next == self.head:
+                self.head = None
+                self.current = None
+                return
+
+            # 마지막 노드 찾기
+            temp = self.head
+            while temp.next != self.head:
+                temp = temp.next
+
+            self.head = current.next
+            temp.next = self.head
+            return
+
+        # 2. 중간 또는 끝 삭제
+        prev = current
+        current = current.next
+
+        while current != self.head:
+            if current.data == data:
+                prev.next = current.next
+                return
+            prev = current
+            current = current.next
+
+        print("삭제할 값이 없습니다.")
+
+    # 다음 노드 가져오기 (순환)
+    def get_next(self):
+        if self.current is None:
+            return None
+
+        data = self.current.data
+        self.current = self.current.next
+        return data
+
+    # 검색 함수
+    def search(self, data):
+        if self.head is None:
+            return False
+
+        temp = self.head
+        while True:
+            if temp.data == data:
+                return True
+            temp = temp.next
+            if temp == self.head:
+                break
+
+        return False
+
+    # 출력 (확인용)
+    def display(self):
+        if self.head is None:
+            print("리스트가 비어 있음")
+            return
+
+        temp = self.head
+        while True:
+            print(temp.data, end=" -> ")
+            temp = temp.next
+            if temp == self.head:
+                break
+        print("(head)")
+
+music = circularlist()
+
+# 삽입
+music.insert("Hype Boy")
+music.insert("Attention")
+music.insert("Dynamite")
+music.insert("Butter")
+
+print("전체 리스트:")
+music.display()
+
+# 검색
+print("\n'Attention' 검색:", music.search("Attention"))
+print("'Hello' 검색:", music.search("Hello"))
+
+# get_next() 테스트
+print("\n순환 출력:")
+for _ in range(6):
+    print(music.get_next())
+
+# 삭제
+music.delete("Dynamite")
+print("\n'Dynamite' 삭제 후:")
+music.display()
